@@ -1,11 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { config } from './config/config';
+import { config } from './config/config.js';
 import cookieParser from 'cookie-parser';
-import { errorHandler } from './error/errorHandler';
-import router from './routes';
+import { errorHandler } from './error/errorHandler.js';
 import { requestLogger } from './middleware/logger.js';
+import router from './routes/index.js';
 dotenv.config();
 
 const app = express();

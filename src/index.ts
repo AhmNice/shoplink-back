@@ -1,6 +1,6 @@
-import app from './app';
-import { config } from './config/config';
-import prisma from './db/database';
+import app from './app.js';
+import { config } from './config/config.js';
+import prisma from './db/database.js';
 
 const PORT = config.PORT;
 

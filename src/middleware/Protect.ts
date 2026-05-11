@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { SessionService } from "../service/Session.service";
-import { asyncHandler } from "../util/asyn";
-import { ApiError } from "../error/apiError";
-import { config } from "../config/config";
-import { SessionPayload } from "../interface/auth.interface";
+import { SessionService } from "../service/Session.service.js";
+import { asyncHandler } from "../util/asyn.js";
+import { ApiError } from "../error/apiError.js";
+import { config } from "../config/config.js";
+import { SessionPayload } from "../interface/auth.interface.js";
 import jwt from "jsonwebtoken";
 import prisma from "../db/database.js";
 export interface AuthRequest extends Request {

@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import prisma from "../db/database";
+import prisma from "../db/database.js";
 
 export async function generateUniqueSlug(storeName: string) {
   const baseSlug = slugify(storeName, {
