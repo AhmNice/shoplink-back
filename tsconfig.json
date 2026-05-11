@@ -2,8 +2,8 @@
   "compilerOptions": {
     "types": ["node", "multer"],
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
