@@ -57,7 +57,7 @@ export const AuthService = {
       userName: `${user.name}`,
       email: `${user.email}`,
       role:`${user.role}`,
-      tier: `${user.tier}`,
+      tier: user.tier,
     }).SignToken(res);
     const { password, ...userWithoutPassword } = user;
     return {
