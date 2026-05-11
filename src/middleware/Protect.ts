@@ -48,6 +48,7 @@ export const verifyJWT = asyncHandler(
 );
 export const protect = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log('Protect middleware invoked');
     try {
       await SessionService.VerifyToken(req, res, next);
     } catch (error) {

@@ -64,6 +64,7 @@ export class SessionService {
       req.user = decoded;
       return next();
     } catch (err) {
+      console.log('Token verification error:', err);
       if (err instanceof jwt.TokenExpiredError) {
         return await SessionService.handleAutomaticRefresh(req, res, next);
       }

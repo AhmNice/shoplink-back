@@ -21,3 +21,21 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     throw error;
   }
 });
+
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const result = await AuthService.logout(res);
+    res.status(200).json(new ApiResponse(200, result, 'Logout successful'));
+  } catch (error) {
+    throw error;
+  }
+});
+
+export const getCurrentUser = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    const user = await AuthService.getCurrentUser(req);
+    res.status(200).json(new ApiResponse(200, user, 'User retrieved successfully'));
+  } catch (error) {
+    throw error;
+  }
+});

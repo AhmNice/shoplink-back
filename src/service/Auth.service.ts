@@ -3,10 +3,10 @@ import prisma from '../db/database.js';
 import { ApiError } from '../error/apiError.js';
 import bcrypt from 'bcrypt';
 import { SessionService } from './Session.service.js';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
-export const AuthService = {
-  async register(userData: UserRegistration) {
+export class AuthService {
+  static async register(userData: UserRegistration) {
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
     return await prisma.$transaction(async (tx: any) => {
@@ -31,8 +31,8 @@ export const AuthService = {
       const { password, ...userWithoutPassword } = user;
       return userWithoutPassword;
     });
-  },
-  async login(credentials: UserLogin, res: Response) {
+  }
+  static async login(credentials: UserLogin, res: Response) {
     const user = await prisma.user.findUnique({
       where: { email: credentials.email },
     });
@@ -56,12 +56,41 @@ export const AuthService = {
       user_id: `${user.id}`,
       userName: `${user.name}`,
       email: `${user.email}`,
-      role:`${user.role}`,
+      role: `${user.role}`,
       tier: user.tier,
     }).SignToken(res);
     const { password, ...userWithoutPassword } = user;
     return {
       user: userWithoutPassword,
     };
-  },
-};
+  }
+  static async logout(res: Response) {
+    const cookieOptions = {
+      httpOnly: true,
+      sameSite: 'none' as const,
+      secure: true,
+      path: '/',
+    };
+
+    res.clearCookie('SHOP_LINK_ACCESS_TOKEN', cookieOptions);
+    res.clearCookie('SHOP_LINK_REFRESH_TOKEN', cookieOptions);
+    return { message: 'Logout successful' };
+  }
+  static async getCurrentUser(req: Request) {
+    if (!req.user) {
+      throw new ApiError({ statusCode: 401, message: 'User not authenticated' });
+    }
+
+    const userId = req.user.user_id;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new ApiError({ statusCode: 404, message: 'User not found' });
+    }
+
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+}
