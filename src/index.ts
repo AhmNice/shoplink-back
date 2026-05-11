@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const startServer = async () => {
+  console.log('🚀 Starting server...', config.PORT);
   try {
     // Test database connection
     await prisma.$connect();
