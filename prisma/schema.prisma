@@ -1,10 +1,11 @@
 generator client {
   provider = "prisma-client-js"
-   output   = "../src/generated/prisma"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+ 
 }
 
 enum Role {
@@ -55,12 +56,12 @@ model Store {
   badge      Badge?
   link       String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  deliveryTime String? @default("")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  deliveryTime String?  @default("")
   minOrder     Int?
   deliveryFee  Int?
-  userId String
+  userId       String
 
   user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   products Product[]
