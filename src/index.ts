@@ -3,8 +3,7 @@ import { config } from './config/config.js';
 import prisma from './db/database.js';
 import dotenv from 'dotenv';
 dotenv.config();
-const PORT = process.env.PORT;
-
+const PORT = Number(process.env.PORT) || 3000;
 const startServer = async () => {
   try {
     // Test database connection
