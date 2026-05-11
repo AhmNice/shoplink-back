@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+   output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum UserTier {
+  FREE
+  PREMIUM
+}
+
+enum Badge {
+  NEW
+  VERIFIED
+  FEATURED
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  name          String?
+  phone         String?
+  tier          UserTier @default(FREE)
+  role          Role     @default(USER)
+  allowedStores Int      @default(1)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  stores Store[]
+}
+
+model Store {
+  id          String  @id @default(uuid())
+  name        String
+  slug        String  @unique
+  description String?
+  logo        String?
+  phone       String
+  address     String?
+  category    String?
+
+  isOpen     Boolean @default(true)
+  isVerified Boolean @default(false)
+  badge      Badge?
+  link       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deliveryTime String? @default("")
+  minOrder     Int?
+  deliveryFee  Int?
+  userId String
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  products Product[]
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String?
+  price         Int
+  image         String
+  isActive      Boolean  @default(true)
+  originalPrice Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  storeId String
+
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+}
