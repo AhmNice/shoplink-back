@@ -3,7 +3,7 @@ import { config } from './config/config.js';
 import prisma from './db/database.js';
 import dotenv from 'dotenv';
 dotenv.config();
-const PORT = Number(process.env.PORT) || 3000;
+
 const startServer = async () => {
   try {
     // Test database connection
@@ -11,8 +11,8 @@ const startServer = async () => {
     console.log('✅ Database connected successfully');
 
     // Start the server
-    app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
+    app.listen(config.PORT, () => {
+      console.log(`🚀 Server is running on port ${config.PORT}`);
       console.log(`📍 Environment: ${config.NODE_ENV}`);
     });
   } catch (error) {
