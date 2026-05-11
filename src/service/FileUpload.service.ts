@@ -1,5 +1,5 @@
-import cloudinary from '../config/cloudinary';
-import { ApiError } from '../error/apiError';
+import cloudinary from '../config/cloudinary.js';
+import { ApiError } from '../error/apiError.js';
 
 export class FileService {
   static async uploadFile(file: Express.Multer.File): Promise<string> {

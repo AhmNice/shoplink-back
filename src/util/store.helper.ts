@@ -1,5 +1,5 @@
 import prisma from '../db/database.js';
-import { ApiError } from '../error/apiError';
+import { ApiError } from '../error/apiError.js';
 
 type Tier = 'FREE' | 'PREMIUM';
 
