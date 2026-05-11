@@ -8,8 +8,8 @@
   "scripts": {
     "prepare": "husky",
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
+    "build": "prisma generate && tsc",
+    "start": "node run-migrations.mjs && node dist/index.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "prisma:generate": "prisma generate",
