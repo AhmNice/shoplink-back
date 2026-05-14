@@ -16,7 +16,7 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   }
 
   const response = {
-    message: error.message,
+    message: error.message || "Internal Server Error",
     statusCode: error.statusCode,
     errors: error.errors || [],
     data: error.data || undefined,

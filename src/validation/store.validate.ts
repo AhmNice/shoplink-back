@@ -10,8 +10,20 @@ const createStoreSchema = z.object({
     category: z.string().optional(),
     logo: z.string().optional(),
     deliveryTime: z.string().optional(),
-    minOrder: z.number().positive().optional(),
-    deliveryFee: z.number().positive().optional(),
+    minOrder: z
+      .string()
+      .transform((val) => parseFloat(val))
+      .refine((val) => val > 0, {
+        message: 'Minimum Order price should be greater than 0',
+      })
+      .optional(),
+    deliveryFee: z
+      .string()
+      .transform((val) => parseFloat(val))
+      .refine((val) => val > 0, {
+        message: 'Delivery fee should be greater than 0',
+      })
+      .optional(),
   }),
 });
 
@@ -24,8 +36,20 @@ const updateStoreSchema = z.object({
     category: z.string().optional(),
     logo: z.string().optional(),
     deliveryTime: z.string().optional(),
-    minOrder: z.number().positive().optional(),
-    deliveryFee: z.number().positive().optional(),
+    minOrder: z
+      .string()
+      .transform((val) => parseFloat(val))
+      .refine((val) => val > 0, {
+        message: 'Minimum Order price should be greater than 0',
+      })
+      .optional(),
+    deliveryFee: z
+      .string()
+      .transform((val) => parseFloat(val))
+      .refine((val) => val > 0, {
+        message: 'Delivery fee should be greater than 0',
+      })
+      .optional(),
   }),
 });
 

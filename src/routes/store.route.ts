@@ -17,6 +17,7 @@ import {
   getStoreBySlugSchema,
 } from '../validation/store.validate.js';
 import { protect } from '../middleware/Protect.js';
+import { upload } from '../util/uploader.js';
 
 const storeRouter = express.Router();
 
@@ -24,9 +25,9 @@ storeRouter.get('/vendors', getAllStores);
 storeRouter.get('/user/:userId', RequestValidation(getUserStoresSchema), getUserStores);
 storeRouter.get('/slug/:slug', RequestValidation(getStoreBySlugSchema), getStoreBySlug);
 storeRouter.get('/:id', RequestValidation(getStoreSchema), getStoreById);
-storeRouter.post('/', RequestValidation(createStoreSchema), createStore);
 
 storeRouter.use(protect); // Protect all routes below this middleware
+storeRouter.post('/', upload.single('logo'), RequestValidation(createStoreSchema), createStore);
 storeRouter.put('/:id', RequestValidation(updateStoreSchema), updateStore);
 storeRouter.delete('/:id', RequestValidation(getStoreSchema), deleteStore);
 

@@ -3,6 +3,7 @@ import prisma from '../db/database.js';
 import { ApiError } from '../error/apiError.js';
 import { CreateProductInput, UpdateProductInput } from '../interface/product.interface.js';
 import { FileService } from './FileUpload.service.js';
+import { canCreateResource } from '../util/store.helper.js';
 
 export const ProductService = {
   async create(req: Request, data: CreateProductInput) {
@@ -13,34 +14,46 @@ export const ProductService = {
         message: 'Missing required fields: name, price, image, storeId',
       });
     }
-
+    const requestUser = req.user;
     // Verify store exists
-    const store = await prisma.store.findUnique({
-      where: { id: data.storeId },
-    });
-
-    if (!store) {
-      throw new ApiError({
-        statusCode: 404,
-        message: 'Store not found',
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: requestUser?.user_id },
       });
-    }
-    console.log(req.file);
-    
-    const pictureUrl = await FileService.uploadFile(req.file as Express.Multer.File);
-    return await prisma.product.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        price: Number(data.price),
-        image: pictureUrl,
-        originalPrice: Number(data.originalPrice),
-        storeId: data.storeId,
-      },
-      include: {
-        store: true,
-      },
+      if (!user) {
+        throw new ApiError({ statusCode: 404, message: 'User not found' });
+      }
+      const store = await tx.store.findUnique({
+        where: { id: data.storeId },
+      });
+
+      if (!store) {
+        throw new ApiError({
+          statusCode: 404,
+          message: 'Store not found',
+        });
+      }
+      console.log(req.file);
+      const canCreate = await canCreateResource(tx, user.id, 'product');
+      if (!canCreate) {
+        throw new ApiError({ statusCode: 403, message: 'You are not allowed to create a product' });
+      }
+      const pictureUrl = await FileService.uploadFile(req.file as Express.Multer.File);
+      return await tx.product.create({
+        data: {
+          name: data.name,
+          description: data.description,
+          price: Number(data.price),
+          image: pictureUrl,
+          originalPrice: Number(data.originalPrice),
+          storeId: data.storeId,
+        },
+        include: {
+          store: true,
+        },
+      });
     });
+    return result;
   },
 
   async getAll(

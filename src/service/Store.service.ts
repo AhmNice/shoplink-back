@@ -5,12 +5,14 @@ import { generateUniqueSlug } from '../util/slug.js';
 import { canCreateResource } from '../util/store.helper.js';
 import { config } from '../config/config.js';
 import { Request } from 'express';
+import { FileService } from './FileUpload.service.js';
 
 export class StoreService {
-  static async create(storeData: CreateStoreInput) {
+  static async create(req:Request,storeData: CreateStoreInput) {
+    const requestUser = req.user
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
-        where: { id: storeData.userId },
+        where: { id: requestUser?.user_id },
       });
       if (!user) {
         throw new ApiError({ statusCode: 404, message: 'User not found' });
@@ -19,7 +21,7 @@ export class StoreService {
       if (!canCreate) {
         throw new ApiError({ statusCode: 403, message: 'You are not allowed to create a store' });
       }
-
+      const logo = await FileService.uploadFile(req.file as Express.Multer.File)
       const slug = await generateUniqueSlug(storeData.name);
       const link = `${config.CLIENT_URL}/store/${slug}`;
       return await tx.store.create({
@@ -32,12 +34,12 @@ export class StoreService {
           slug,
           link,
           logo:
-            storeData?.logo ||
+            logo ||
             'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHN0b3JlfGVufDB8fDB8fHww',
-          userId: storeData.userId,
+          userId: requestUser?.user_id || storeData.userId,
           deliveryTime: storeData.deliveryTime || '',
-          minOrder: storeData.minOrder || null,
-          deliveryFee: storeData.deliveryFee || null,
+          minOrder: Number(storeData.minOrder) || null,
+          deliveryFee: Number(storeData.deliveryFee) || null,
         },
       });
     });
@@ -96,8 +98,8 @@ export class StoreService {
     if (data.category !== undefined) updateData.category = data.category;
     if (data.logo !== undefined) updateData.logo = data.logo;
     if (data.deliveryTime !== undefined) updateData.deliveryTime = data.deliveryTime;
-    if (data.minOrder !== undefined) updateData.minOrder = data.minOrder;
-    if (data.deliveryFee !== undefined) updateData.deliveryFee = data.deliveryFee;
+    if (data.minOrder !== undefined) updateData.minOrder = Number(data.minOrder);
+    if (data.deliveryFee !== undefined) updateData.deliveryFee = Number(data.deliveryFee);
 
     return await prisma.store.update({ where: { id }, data: updateData });
   }

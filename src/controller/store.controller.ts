@@ -5,7 +5,7 @@ import { ApiResponse } from '../util/apiResponse.js';
 
 export const createStore = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const store = await StoreService.create(req.body);
+    const store = await StoreService.create(req, req.body);
     res.status(201).json(new ApiResponse(201, store, 'Store created successfully'));
   } catch (error) {
     throw error;
