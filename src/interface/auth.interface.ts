@@ -3,6 +3,7 @@ interface UserRegistration {
   email: string;
   password: string;
   name: string;
+  phone: string;
 }
 interface UserLogin {
   email: string;
