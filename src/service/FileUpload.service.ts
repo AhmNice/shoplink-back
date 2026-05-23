@@ -4,7 +4,8 @@ import { ApiError } from '../error/apiError.js';
 export class FileService {
   static async uploadFile(file: Express.Multer.File): Promise<string> {
     if (!file) {
-      throw new ApiError({ statusCode: 400, message: 'No file provided' });
+      return '';
+      // throw new ApiError({ statusCode: 400, message: 'No file provided' });
     }
     const fileSource = `data:${file.mimetype};base64,${file.buffer.toString('base64')}`;
     const uploadedFile = await cloudinary.uploader.upload(fileSource, {
@@ -13,5 +14,4 @@ export class FileService {
     });
     return uploadedFile.secure_url;
   }
-  
 }
