@@ -14,8 +14,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 });
 export const register = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const { email, password, name } = req.body;
-    const user = await AuthService.register({ email, password, name });
+    const { email, password, name, phone } = req.body;
+    const user = await AuthService.register({ email, password, name, phone });
     res.status(201).json(new ApiResponse(201, user, 'User registered successfully'));
   } catch (error) {
     throw error;
