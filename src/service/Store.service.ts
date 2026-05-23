@@ -60,13 +60,19 @@ export class StoreService {
         orderBy: { createdAt: 'desc' },
         include: {
           products: true,
+          _count: { select: { products: true } },
         },
       }),
       prisma.store.count({ where }),
     ]);
 
+    const data = stores.map((s: any) => ({
+      ...s,
+      productsCount: s._count?.products ?? s.products?.length ?? 0,
+    }));
+
     return {
-      data: stores,
+      data,
       pagination: { total, page, limit, pages: Math.ceil(total / limit) },
     };
   }
@@ -76,10 +82,14 @@ export class StoreService {
       throw new ApiError({ statusCode: 400, message: 'Store ID is required' });
     }
 
-    const store = await prisma.store.findUnique({ where: { id } });
+    const store = await prisma.store.findUnique({
+      where: { id },
+      include: { _count: { select: { products: true } } },
+    });
     if (!store) {
       throw new ApiError({ statusCode: 404, message: 'Store not found' });
     }
+    (store as any).productsCount = (store as any)._count?.products ?? 0;
     return store;
   }
 
@@ -139,12 +149,18 @@ export class StoreService {
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
+        include: { _count: { select: { products: true } } },
       }),
       prisma.store.count({ where: { userId } }),
     ]);
 
+    const data = stores.map((s: any) => ({
+      ...s,
+      productsCount: s._count?.products ?? 0,
+    }));
+
     return {
-      data: stores,
+      data,
       pagination: { total, page, limit, pages: Math.ceil(total / limit) },
     };
   }
@@ -157,10 +173,15 @@ export class StoreService {
     const where: any = { slug };
     if (userId) where.userId = userId;
 
-    const store = await prisma.store.findFirst({ where, include: { products: true } });
+    const store = await prisma.store.findFirst({
+      where,
+      include: { products: true, _count: { select: { products: true } } },
+    });
     if (!store) {
       throw new ApiError({ statusCode: 404, message: 'Store not found' });
     }
+    (store as any).productsCount =
+      (store as any)._count?.products ?? (store as any).products?.length ?? 0;
     return store;
   }
 }
