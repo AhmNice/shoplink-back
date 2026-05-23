@@ -8,8 +8,8 @@ import { Request } from 'express';
 import { FileService } from './FileUpload.service.js';
 
 export class StoreService {
-  static async create(req: Request, storeData: CreateStoreInput) {
-    const requestUser = req.user;
+  static async create(req:Request,storeData: CreateStoreInput) {
+    const requestUser = req.user
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
         where: { id: requestUser?.user_id },
@@ -21,14 +21,7 @@ export class StoreService {
       if (!canCreate) {
         throw new ApiError({ statusCode: 403, message: 'You are not allowed to create a store' });
       }
-      const logo = await FileService.uploadFile(req.file as Express.Multer.File);
-      let fileToLogoUrl = '';
-      if (logo) {
-        fileToLogoUrl = logo;
-      } else {
-        fileToLogoUrl =
-          'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHN0b3JlfGVufDB8fDB8fHww';
-      }
+      const logo = await FileService.uploadFile(req.file as Express.Multer.File)
       const slug = await generateUniqueSlug(storeData.name);
       const link = `${config.CLIENT_URL}/store/${slug}`;
       return await tx.store.create({
@@ -40,7 +33,9 @@ export class StoreService {
           category: storeData.category,
           slug,
           link,
-          logo: fileToLogoUrl,
+          logo:
+            logo ||
+            'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHN0b3JlfGVufDB8fDB8fHww',
           userId: requestUser?.user_id || storeData.userId,
           deliveryTime: storeData.deliveryTime || '',
           minOrder: Number(storeData.minOrder) || null,
