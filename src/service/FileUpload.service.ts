@@ -13,4 +13,5 @@ export class FileService {
     });
     return uploadedFile.secure_url;
   }
+  
 }

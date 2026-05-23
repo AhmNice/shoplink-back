@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum Role {
@@ -36,7 +36,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relationships
-  stores Store[]
+  stores   Store[]
+  products Product[]
 }
 
 model Store {
@@ -77,6 +78,7 @@ model Product {
   updatedAt     DateTime @updatedAt
 
   storeId String
-
-  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
 }

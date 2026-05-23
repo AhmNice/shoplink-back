@@ -47,9 +47,11 @@ export const ProductService = {
           image: pictureUrl,
           originalPrice: Number(data.originalPrice),
           storeId: data.storeId,
+          userId: user.id,
         },
         include: {
           store: true,
+          user: true,
         },
       });
     });
